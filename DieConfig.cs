@@ -10,7 +10,8 @@ public class DieConfig
         EndTime = "10:00 AM",
         MinutesBetweenCloseAttempts = 10,
         Close = [new(ProcessTargetType.ProcessLocation, @"C:\Program Files (x86)\Steam"),
-            new(ProcessTargetType.MainWindowTitle, "Minecraft")],
+                 new(ProcessTargetType.MainWindowTitle, "Minecraft"),
+                 new(ProcessTargetType.MainWindowTitle, "Visual Studio", endEarlyAt: "7:00 AM")],
         Allow = [new(ProcessTargetType.ProcessName, "CrashHandler")]
     };
     [JsonInclude]
