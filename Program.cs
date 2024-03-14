@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 
-namespace die;
+namespace d9.slp;
 internal static class Program
 {
     public const string DefaultConfigPath = "config.json";

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace die;
+namespace d9.slp;
 #pragma warning disable CS8618 // properties are initialized by JSON serialization
 public class DieConfig
 {
