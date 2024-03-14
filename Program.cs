@@ -7,7 +7,7 @@ internal static class Program
 {
     public const string DefaultConfigPath = "config.json";
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor: initialized in Main
-    internal static DieConfig _config;
+    internal static SlpConfig _config;
 #pragma warning restore CS8618
     internal static TimeOnly StartTime => TimeOnly.Parse(_config.StartTime);
     internal static TimeOnly EndTime => TimeOnly.Parse(_config.EndTime);
@@ -27,11 +27,11 @@ internal static class Program
     private static void LoadConfig()
     {
         string configPath = CommandLineArgs.TryGet(nameof(configPath), CommandLineArgs.Parsers.FilePath) ?? DefaultConfigPath;
-        DieConfig? config = Config.TryLoad<DieConfig>(configPath);
+        SlpConfig? config = Config.TryLoad<SlpConfig>(configPath);
         if (config is null)
         {
             Console.WriteLine($"Failed to load config at {configPath}, saving defaults there...");
-            config = DieConfig.Default;
+            config = SlpConfig.Default;
             File.WriteAllText(configPath, JsonSerializer.Serialize(config, Config.DefaultSerializerOptions));
         }
         _config = config!;

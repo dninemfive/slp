@@ -1,17 +1,17 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace d9.slp;
 #pragma warning disable CS8618 // properties are initialized by JSON serialization
-public class DieConfig
+public class SlpConfig
 {
-    public static readonly DieConfig Default = new() {
+    public static readonly SlpConfig Default = new()
+    {
         StartTime = "12:30 AM",
         EndTime = "10:00 AM",
         MinutesBetweenCloseAttempts = 10,
         Close = [new(ProcessTargetType.ProcessLocation, @"C:\Program Files (x86)\Steam"),
-                 new(ProcessTargetType.MainWindowTitle, "Minecraft"),
-                 new(ProcessTargetType.MainWindowTitle, "Visual Studio", endEarlyAt: "7:00 AM")],
+            new(ProcessTargetType.MainWindowTitle, "Minecraft"),
+            new(ProcessTargetType.MainWindowTitle, "Visual Studio", endEarlyAt: "7:00 AM")],
         Allow = [new(ProcessTargetType.ProcessName, "CrashHandler")]
     };
     [JsonInclude]
