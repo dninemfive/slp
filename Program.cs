@@ -1,8 +1,10 @@
 ﻿using d9.utl;
 using System.Diagnostics;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 internal static class Program
 {
+    internal const string DefaultConfigPath = "config.json";
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor: initialized in Main
     internal static DieConfig _config;
 #pragma warning restore CS8618
@@ -12,7 +14,7 @@ internal static class Program
     internal static int TimeBetweenShutdownAttempts => _config.MinutesBetweenCloseAttempts.ToMilliseconds();
     private static void Main(string[] args)
     {
-        _config = Config.TryLoad<DieConfig>("config.json") ?? DieConfig.Default;
+        LoadConfig();
         return;
         while (true)
         {
@@ -21,6 +23,17 @@ internal static class Program
             ShutDownVideoGames();
             SleepFor(TimeBetweenShutdownAttempts);
         }
+    }
+    private static void LoadConfig()
+    {
+        string configPath = CommandLineArgs.TryGet(nameof(configPath), CommandLineArgs.Parsers.FilePath) ?? DefaultConfigPath;
+        DieConfig? config = Config.TryLoad<DieConfig>(configPath);
+        if (config is null)
+        {
+            config = DieConfig.Default;
+            File.WriteAllText(configPath, JsonSerializer.Serialize(config));
+        }
+        _config = config!;
     }
     internal static int ToMilliseconds(this int minutes)
         => minutes * 60 * 1000;
