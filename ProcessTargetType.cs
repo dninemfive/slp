@@ -1,5 +1,5 @@
 ﻿namespace die;
-internal enum ProcessTargetType
+public enum ProcessTargetType
 {
     MainWindowTitle, ProcessName, ProcessLocation
 }

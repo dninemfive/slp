@@ -17,6 +17,7 @@ internal static class Program
     {
         LoadConfig();
         Console.WriteLine(_config.PrettyPrint());
+        return;
         ClosePrograms();
         while (true)
         {
@@ -29,7 +30,10 @@ internal static class Program
     private static void LoadConfig()
     {
         string configPath = CommandLineArgs.TryGet(nameof(configPath), CommandLineArgs.Parsers.FilePath) ?? DefaultConfigPath;
-        DieConfig? config = Config.TryLoad<DieConfig>(configPath);
+        JsonElement? asdf = JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(configPath), Config.DefaultSerializerOptions);
+        Console.WriteLine($"asdf: {asdf.PrettyPrint()}");
+        return;
+        DieConfig? config = JsonSerializer.Deserialize<dynamic>(File.ReadAllText(configPath), Config.DefaultSerializerOptions);//  = Config.TryLoad<DieConfig>(@"C:\Users\dninemfive\Documents\workspaces\misc\die\bin\Debug\net8.0\config.json");
         if (config is null)
         {
             Console.WriteLine($"Failed to load config at {configPath}, saving defaults there...");

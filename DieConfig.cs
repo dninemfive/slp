@@ -2,14 +2,15 @@
 
 namespace die;
 [method: JsonConstructor]
-internal class DieConfig(string startTime, string endTime, int minutesBetweenCloseAttempts, List<ProcessTargeter> close, List<ProcessTargeter> allow)
+public class DieConfig(string startTime, string endTime, double minutesBetweenCloseAttempts, List<ProcessTargeter> close, List<ProcessTargeter> allow)
 {
-    public static DieConfig Default = new("12:30 AM",
-                                          "10:00 AM",
-                                          10,
-                                          [new(ProcessTargetType.ProcessLocation, @"C:\Program Files (x86)\Steam"),
-                                              new(ProcessTargetType.MainWindowTitle, "Minecraft")],
-                                          [new(ProcessTargetType.ProcessName, "CrashHandler")]);
+    [JsonIgnore]
+    public static readonly DieConfig Default = new("12:30 AM",
+                                                   "10:00 AM",
+                                                   10,
+                                                   [new(ProcessTargetType.ProcessLocation, @"C:\Program Files (x86)\Steam"),
+                                                    new(ProcessTargetType.MainWindowTitle, "Minecraft")],
+                                                   [new(ProcessTargetType.ProcessName, "CrashHandler")]);
     [JsonInclude]
     public TimeOnly StartTime = TimeOnly.Parse(startTime);
     [JsonInclude]

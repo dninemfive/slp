@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace die;
 [method: JsonConstructor]
-internal class ProcessTargeter(ProcessTargetType type, string value)
+public class ProcessTargeter(ProcessTargetType type, string value)
 {
     [JsonInclude]
     public ProcessTargetType TargetType = type;
