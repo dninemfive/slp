@@ -16,6 +16,8 @@ internal static class Program
     private static void Main()
     {
         LoadConfig();
+        Console.WriteLine(_config.PrettyPrint());
+        ClosePrograms();
         while (true)
         {
             if (TimeNow > EndTime || TimeNow < StartTime)
@@ -30,18 +32,19 @@ internal static class Program
         DieConfig? config = Config.TryLoad<DieConfig>(configPath);
         if (config is null)
         {
+            Console.WriteLine($"Failed to load config at {configPath}, saving defaults there...");
             config = DieConfig.Default;
-            File.WriteAllText(configPath, JsonSerializer.Serialize(config));
+            File.WriteAllText(configPath, JsonSerializer.Serialize(config, Config.DefaultSerializerOptions));
         }
         _config = config!;
     }
     internal static void ClosePrograms()
     {
         foreach (Process process in Process.GetProcesses())
-            if (_config.Close.Any(x => x.Matches(process)) && !_config.Close.Any(x => x.Matches(process)))
+            if (_config.Close.Any(x => x.Matches(process)) && !_config.Allow.Any(x => x.Matches(process)))
             {
                 Console.WriteLine($"{TimeNow,-10} Closing {process.MainWindowTitle} ({process.ProcessName})...");
-                process.CloseMainWindow();
+                // process.CloseMainWindow();
             }
     }
     private static void SleepUntil(TimeOnly time)
@@ -52,7 +55,7 @@ internal static class Program
     }
     private static void SleepFor(int milliseconds)
     {
-        Console.WriteLine($"Sleeping until {TimeOnly.FromDateTime(DateTime.Now + TimeSpan.FromMilliseconds(milliseconds))}.");
+        Console.WriteLine($"Sleeping for {milliseconds}ms until {TimeOnly.FromDateTime(DateTime.Now + TimeSpan.FromMilliseconds(milliseconds))}.");
         Thread.Sleep(milliseconds);
     }
     internal static int ToMilliseconds(this double minutes)
