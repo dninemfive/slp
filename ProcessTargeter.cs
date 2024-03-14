@@ -3,13 +3,20 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace die;
-[method: JsonConstructor]
-public class ProcessTargeter(ProcessTargetType type, string value)
+#pragma warning disable CS8618 // properties are initialized by JSON serialization
+public class ProcessTargeter
 {
+    [JsonConstructor]
+    public ProcessTargeter() { }
+    public ProcessTargeter(ProcessTargetType type, string value)
+    {
+        TargetType = type;
+        Value = value;
+    }
     [JsonInclude]
-    public ProcessTargetType TargetType { get; private set; } = type;
+    public ProcessTargetType TargetType { get; private set; } 
     [JsonInclude]
-    public string Value { get; private set; } = value;
+    public string Value { get; private set; }
     public bool Matches(Process t) => TargetType switch
     {
         ProcessTargetType.MainWindowTitle => t.MainWindowTitleContains(Value),
