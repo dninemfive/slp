@@ -19,13 +19,13 @@ public class ProcessTargeter(ProcessTargetType type, string value)
     };
     public static ProcessTargeter FromJsonElement(JsonElement jse)
     {
-        return new(TypeOf(jse.GetProperty("targetType").GetString()), jse.GetProperty("value").GetString());
+        return new(TypeOf(jse.GetProperty("targetType").GetString()!), jse.GetProperty("value").GetString()!);
     }
     public static ProcessTargetType TypeOf(string s)
     {
         foreach(ProcessTargetType type in Enum.GetValues(typeof(ProcessTargetType)))
         {
-            if (type.ToString().ToLower() == s.ToLower())
+            if (type.ToString().Equals(s, StringComparison.CurrentCultureIgnoreCase))
                 return type;
         }
         return (ProcessTargetType)666;

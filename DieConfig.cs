@@ -23,8 +23,8 @@ public class DieConfig(TimeOnly startTime, TimeOnly endTime, double minutesBetwe
     public List<ProcessTargeter> Allow { get; private set; } = allow;
     public static DieConfig FromJsonElement(JsonElement jse)
     {
-        TimeOnly startTime = TimeOnly.Parse(jse.GetProperty("startTime").GetRawText().Replace("\"", "")),
-            endTime = TimeOnly.Parse(jse.GetProperty("endTime").GetRawText().Replace("\"", ""));
+        TimeOnly startTime = TimeOnly.Parse(jse.GetProperty("startTime").GetString()!),
+            endTime = TimeOnly.Parse(jse.GetProperty("endTime").GetString()!);
         double minutesBetweenCloseAttempts = jse.GetProperty("minutesBetweenCloseAttempts").GetDouble();
         List<ProcessTargeter> close = jse.GetProperty("close").Deserialize<List<JsonElement>>()!.Select(ProcessTargeter.FromJsonElement).ToList(),
             allow = jse.GetProperty("allow").Deserialize<List<JsonElement>>()!.Select(ProcessTargeter.FromJsonElement).ToList();
