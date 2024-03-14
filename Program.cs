@@ -15,7 +15,14 @@ internal static class Program
     internal static int TimeBetweenShutdownAttempts => _config.MinutesBetweenCloseAttempts.ToMilliseconds();
     private static void Main()
     {
-        LoadConfig();
+        if(LoadConfig() is SlpConfig config)
+        {
+            _config = config;
+        } 
+        else
+        {
+            return;
+        }
         while (true)
         {
             if (TimeNow > EndTime || TimeNow < StartTime)
@@ -24,17 +31,14 @@ internal static class Program
             SleepFor(TimeBetweenShutdownAttempts);
         }
     }
-    private static void LoadConfig()
+    private static SlpConfig? LoadConfig()
     {
         string configPath = CommandLineArgs.TryGet(nameof(configPath), CommandLineArgs.Parsers.FilePath) ?? DefaultConfigPath;
-        SlpConfig? config = Config.TryLoad<SlpConfig>(configPath);
-        if (config is null)
-        {
-            Console.WriteLine($"Failed to load config at {configPath}, saving defaults there...");
-            config = SlpConfig.Default;
-            File.WriteAllText(configPath, JsonSerializer.Serialize(config, Config.DefaultSerializerOptions));
-        }
-        _config = config!;
+        if (Config.TryLoad<SlpConfig>(configPath) is SlpConfig config)
+            return config;
+        Console.WriteLine($"Failed to load config at {configPath}! Saving an example configuration file there and exiting...");
+        File.WriteAllText(configPath, JsonSerializer.Serialize(SlpConfig.Default, Config.DefaultSerializerOptions));
+        return null;
     }
     internal static void ClosePrograms()
     {

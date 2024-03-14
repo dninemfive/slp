@@ -1,13 +1,13 @@
 ﻿using System.Diagnostics;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace slp;
+namespace d9.slp;
 #pragma warning disable CS8618 // properties are initialized by JSON serialization
 public class ProcessTargeter
 {
     [JsonConstructor]
-    public ProcessTargeter() { }
+    public ProcessTargeter()
+    { }
     public ProcessTargeter(ProcessTargetType type, string value, string? startLateAt = null, string? endEarlyAt = null)
     {
         TargetType = type;
@@ -16,7 +16,7 @@ public class ProcessTargeter
         EndEarlyAt = endEarlyAt;
     }
     [JsonInclude]
-    public ProcessTargetType TargetType { get; private set; } 
+    public ProcessTargetType TargetType { get; private set; }
     [JsonInclude]
     public string Value { get; private set; }
     [JsonInclude]
@@ -28,7 +28,7 @@ public class ProcessTargeter
     {
         get
         {
-            if(_lateStartTime is null && StartLateAt is not null)
+            if (_lateStartTime is null && StartLateAt is not null)
                 _lateStartTime = TimeOnly.Parse(StartLateAt);
             return _lateStartTime;
         }
