@@ -6,9 +6,9 @@ namespace die;
 public class ProcessTargeter(ProcessTargetType type, string value)
 {
     [JsonInclude]
-    public ProcessTargetType TargetType = type;
+    public ProcessTargetType TargetType { get; private set; } = type;
     [JsonInclude]
-    public string Value = value;
+    public string Value { get; private set; } = value;
     public bool Matches(Process t) => TargetType switch
     {
         ProcessTargetType.MainWindowTitle => t.MainWindowTitleContains(Value),
