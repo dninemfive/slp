@@ -26,8 +26,8 @@ public class DieConfig(TimeOnly startTime, TimeOnly endTime, double minutesBetwe
         TimeOnly startTime = TimeOnly.Parse(jse.GetProperty("startTime").GetRawText().Replace("\"", "")),
             endTime = TimeOnly.Parse(jse.GetProperty("endTime").GetRawText().Replace("\"", ""));
         double minutesBetweenCloseAttempts = jse.GetProperty("minutesBetweenCloseAttempts").GetDouble();
-        List<ProcessTargeter> close = jse.GetProperty("close").Deserialize<List<ProcessTargeter>>()!,
-            allow = jse.GetProperty("allow").Deserialize<List<ProcessTargeter>>()!;
+        List<ProcessTargeter> close = jse.GetProperty("close").Deserialize<List<JsonElement>>()!.Select(ProcessTargeter.FromJsonElement).ToList(),
+            allow = jse.GetProperty("allow").Deserialize<List<JsonElement>>()!.Select(ProcessTargeter.FromJsonElement).ToList();
         return new(startTime, endTime, minutesBetweenCloseAttempts, close, allow);
     }
 }

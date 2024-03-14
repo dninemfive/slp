@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace die;
@@ -16,4 +17,17 @@ public class ProcessTargeter(ProcessTargetType type, string value)
         ProcessTargetType.ProcessLocation => t.IsInFolder(Value),
         _ => throw new Exception($"{TargetType} ({(int)TargetType}) is not a valid process target type!")
     };
+    public static ProcessTargeter FromJsonElement(JsonElement jse)
+    {
+        return new(TypeOf(jse.GetProperty("targetType").GetString()), jse.GetProperty("value").GetString());
+    }
+    public static ProcessTargetType TypeOf(string s)
+    {
+        foreach(ProcessTargetType type in Enum.GetValues(typeof(ProcessTargetType)))
+        {
+            if (type.ToString().ToLower() == s.ToLower())
+                return type;
+        }
+        return (ProcessTargetType)666;
+    }
 }
