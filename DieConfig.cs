@@ -11,13 +11,13 @@ internal class DieConfig(string startTime, string endTime, int minutesBetweenClo
                                               new(ProcessTargetType.MainWindowTitle, "Minecraft")],
                                           [new(ProcessTargetType.ProcessName, "CrashHandler")]);
     [JsonInclude]
-    internal TimeOnly StartTime = TimeOnly.Parse(startTime);
+    public TimeOnly StartTime = TimeOnly.Parse(startTime);
     [JsonInclude]
-    internal TimeOnly EndTime = TimeOnly.Parse(endTime);
+    public TimeOnly EndTime = TimeOnly.Parse(endTime);
     [JsonInclude]
-    internal double MinutesBetweenCloseAttempts = minutesBetweenCloseAttempts;
+    public double MinutesBetweenCloseAttempts = minutesBetweenCloseAttempts;
     [JsonInclude]
-    internal List<ProcessTargeter> Close = close;
+    public List<ProcessTargeter> Close = close;
     [JsonInclude]
-    internal List<ProcessTargeter> Allow = allow;
+    public List<ProcessTargeter> Allow = allow;
 }

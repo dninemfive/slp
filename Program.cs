@@ -5,7 +5,7 @@ using System.Text.Json;
 namespace die;
 internal static class Program
 {
-    internal const string DefaultConfigPath = "config.json";
+    public const string DefaultConfigPath = "config.json";
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor: initialized in Main
     internal static DieConfig _config;
 #pragma warning restore CS8618

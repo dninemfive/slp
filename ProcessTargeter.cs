@@ -14,6 +14,6 @@ internal class ProcessTargeter(ProcessTargetType type, string value)
         ProcessTargetType.MainWindowTitle => t.MainWindowTitleContains(Value),
         ProcessTargetType.ProcessName => t.NameContains(Value),
         ProcessTargetType.ProcessLocation => t.IsInFolder(Value),
-        _ => throw new ArgumentOutOfRangeException(nameof(TargetType))
+        _ => throw new Exception($"{TargetType} ({(int)TargetType}) is not a valid process target type!")
     };
 }
