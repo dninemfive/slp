@@ -16,9 +16,6 @@ internal static class Program
     private static void Main()
     {
         LoadConfig();
-        Console.WriteLine(_config.PrettyPrint());
-        return;
-        ClosePrograms();
         while (true)
         {
             if (TimeNow > EndTime || TimeNow < StartTime)
@@ -30,16 +27,13 @@ internal static class Program
     private static void LoadConfig()
     {
         string configPath = CommandLineArgs.TryGet(nameof(configPath), CommandLineArgs.Parsers.FilePath) ?? DefaultConfigPath;
-        JsonElement? asdf = JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(configPath), Config.DefaultSerializerOptions);
-        Console.WriteLine($"asdf: {asdf.PrettyPrint()}");
-        DieConfig? config = DieConfig.FromJsonElement(asdf.Value);//JsonSerializer.Deserialize<DieConfig>(File.ReadAllText(configPath), Config.DefaultSerializerOptions);//  = Config.TryLoad<DieConfig>(@"C:\Users\dninemfive\Documents\workspaces\misc\die\bin\Debug\net8.0\config.json");
+        DieConfig? config = Config.TryLoad<DieConfig>(configPath);
         if (config is null)
         {
             Console.WriteLine($"Failed to load config at {configPath}, saving defaults there...");
             config = DieConfig.Default;
             File.WriteAllText(configPath, JsonSerializer.Serialize(config, Config.DefaultSerializerOptions));
         }
-        Console.WriteLine($"fuck: {config.PrettyPrint()}");
         _config = config!;
     }
     internal static void ClosePrograms()
@@ -48,7 +42,7 @@ internal static class Program
             if (_config.Close.Any(x => x.Matches(process)) && !_config.Allow.Any(x => x.Matches(process)))
             {
                 Console.WriteLine($"{TimeNow,-10} Closing {process.MainWindowTitle} ({process.ProcessName})...");
-                // process.CloseMainWindow();
+                process.CloseMainWindow();
             }
     }
     private static void SleepUntil(TimeOnly time)
