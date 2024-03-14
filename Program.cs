@@ -9,8 +9,8 @@ internal static class Program
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor: initialized in Main
     internal static DieConfig _config;
 #pragma warning restore CS8618
-    internal static TimeOnly StartTime => _config.StartTime;
-    internal static TimeOnly EndTime => _config.EndTime;
+    internal static TimeOnly StartTime => TimeOnly.Parse(_config.StartTime);
+    internal static TimeOnly EndTime => TimeOnly.Parse(_config.EndTime);
     internal static TimeOnly TimeNow => TimeOnly.FromDateTime(DateTime.Now);
     internal static int TimeBetweenShutdownAttempts => _config.MinutesBetweenCloseAttempts.ToMilliseconds();
     private static void Main()

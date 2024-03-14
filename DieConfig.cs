@@ -2,23 +2,25 @@
 using System.Text.Json.Serialization;
 
 namespace die;
-[method: JsonConstructor]
-public class DieConfig(string startTime, string endTime, double minutesBetweenCloseAttempts, List<ProcessTargeter> close, List<ProcessTargeter> allow)
+#pragma warning disable CS8618 // properties are initialized by JSON serialization
+public class DieConfig
 {
-    public static readonly DieConfig Default = new("12:30 AM",
-                                                   "10:00 AM",
-                                                   10,
-                                                   [new(ProcessTargetType.ProcessLocation, @"C:\Program Files (x86)\Steam"),
-                                                    new(ProcessTargetType.MainWindowTitle, "Minecraft")],
-                                                   [new(ProcessTargetType.ProcessName, "CrashHandler")]);
+    public static readonly DieConfig Default = new() {
+        StartTime = "12:30 AM",
+        EndTime = "10:00 AM",
+        MinutesBetweenCloseAttempts = 10,
+        Close = [new(ProcessTargetType.ProcessLocation, @"C:\Program Files (x86)\Steam"),
+            new(ProcessTargetType.MainWindowTitle, "Minecraft")],
+        Allow = [new(ProcessTargetType.ProcessName, "CrashHandler")]
+    };
     [JsonInclude]
-    public TimeOnly StartTime { get; private set; } = TimeOnly.Parse(startTime);
+    public string StartTime { get; private set; }
     [JsonInclude]
-    public TimeOnly EndTime { get; private set; } = TimeOnly.Parse(endTime);
+    public string EndTime { get; private set; }
     [JsonInclude]
-    public double MinutesBetweenCloseAttempts { get; private set; } = minutesBetweenCloseAttempts;
+    public double MinutesBetweenCloseAttempts { get; private set; }
     [JsonInclude]
-    public List<ProcessTargeter> Close { get; private set; } = close;
+    public List<ProcessTargeter> Close { get; private set; }
     [JsonInclude]
-    public List<ProcessTargeter> Allow { get; private set; } = allow;
+    public List<ProcessTargeter> Allow { get; private set; }
 }
