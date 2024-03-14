@@ -1,7 +1,8 @@
 ﻿using d9.utl;
 using System.Diagnostics;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+
+namespace die;
 internal static class Program
 {
     internal const string DefaultConfigPath = "config.json";
@@ -12,15 +13,14 @@ internal static class Program
     internal static TimeOnly EndTime => _config.EndTime;
     internal static TimeOnly TimeNow => TimeOnly.FromDateTime(DateTime.Now);
     internal static int TimeBetweenShutdownAttempts => _config.MinutesBetweenCloseAttempts.ToMilliseconds();
-    private static void Main(string[] args)
+    private static void Main()
     {
         LoadConfig();
-        return;
         while (true)
         {
             if (TimeNow > EndTime || TimeNow < StartTime)
                 SleepUntil(StartTime);
-            ShutDownVideoGames();
+            ClosePrograms();
             SleepFor(TimeBetweenShutdownAttempts);
         }
     }
@@ -35,8 +35,15 @@ internal static class Program
         }
         _config = config!;
     }
-    internal static int ToMilliseconds(this int minutes)
-        => minutes * 60 * 1000;
+    internal static void ClosePrograms()
+    {
+        foreach (Process process in Process.GetProcesses())
+            if (_config.Close.Any(x => x.Matches(process)) && !_config.Close.Any(x => x.Matches(process)))
+            {
+                Console.WriteLine($"{TimeNow,-10} Closing {process.MainWindowTitle} ({process.ProcessName})...");
+                process.CloseMainWindow();
+            }
+    }
     private static void SleepUntil(TimeOnly time)
     {
         Console.WriteLine($"Sleeping until {time}.");
@@ -48,81 +55,6 @@ internal static class Program
         Console.WriteLine($"Sleeping until {TimeOnly.FromDateTime(DateTime.Now + TimeSpan.FromMilliseconds(milliseconds))}.");
         Thread.Sleep(milliseconds);
     }
-    private static ProcessModule? TryGetProcessModule(this Process process)
-    {
-        try
-        {
-            return process.MainModule;
-        }
-        catch
-        {
-            return null;
-        }
-    }
-    internal static bool IsCrashHandler(this Process process)
-        => process.ProcessName.Contains("crashhandler", StringComparison.InvariantCultureIgnoreCase);
-    internal static bool IsInSteamFolder(this Process process)
-        => process.TryGetProcessModule()?
-                  .FileName
-                  .IsInFolder(@"C:\Program Files (x86)\Steam\steamapps\common") 
-            ?? false;
-    internal static bool IsVideoGame(this Process process)
-        => process.IsInSteamFolder() || process.MainWindowTitle.Contains("Minecraft");
-    internal static bool IsInFolder(this Process process, string folder)
-        => process.TryGetProcessModule()?
-                  .FileName
-                  .IsInFolder(folder)
-            ?? false;
-    internal static bool NameContains(this Process process, string name)
-        => process.ProcessName.Contains(name, StringComparison.InvariantCultureIgnoreCase);
-    internal static bool MainWindowTitleContains(this Process process, string name)
-        => process.MainWindowTitle.Contains(name, StringComparison.InvariantCultureIgnoreCase);
-    internal static void ShutDownVideoGames()
-    {
-        foreach (Process process in Process.GetProcesses())
-            if (process.IsVideoGame() && !process.IsCrashHandler())
-            {
-                Console.WriteLine($"{TimeNow,-10} Closing {process.MainWindowTitle} ({process.ProcessName})...");
-                process.CloseMainWindow();
-            }
-    }
-}
-[method: JsonConstructor]
-internal class DieConfig(string startTime, string endTime, int minutesBetweenCloseAttempts, List<ProcessTargeter> close, List<ProcessTargeter> allow)
-{
-    public static DieConfig Default = new("12:30 AM",
-                                          "10:00 AM",
-                                          10,
-                                          [new(ProcessTargetType.ProcessLocation, @"C:\Program Files (x86)\Steam"),
-                                           new(ProcessTargetType.MainWindowTitle, "Minecraft")],
-                                          [new(ProcessTargetType.ProcessName, "CrashHandler")]);
-    [JsonInclude]
-    internal TimeOnly StartTime = TimeOnly.Parse(startTime);
-    [JsonInclude]
-    internal TimeOnly EndTime = TimeOnly.Parse(endTime);
-    [JsonInclude]
-    internal int MinutesBetweenCloseAttempts = minutesBetweenCloseAttempts;
-    [JsonInclude]
-    internal List<ProcessTargeter> Close = close;
-    [JsonInclude]
-    internal List<ProcessTargeter> Allow = allow;
-}
-[method: JsonConstructor]
-internal class ProcessTargeter(ProcessTargetType type, string value)
-{
-    [JsonInclude]
-    public ProcessTargetType TargetType = type;
-    [JsonInclude]
-    public string Value = value;
-    public bool Matches(Process t) => TargetType switch
-    {
-        ProcessTargetType.MainWindowTitle => t.MainWindowTitleContains(Value),
-        ProcessTargetType.ProcessName => t.NameContains(Value),
-        ProcessTargetType.ProcessLocation => t.IsInFolder(Value),
-        _ => throw new ArgumentOutOfRangeException(nameof(TargetType))
-    };
-}
-internal enum ProcessTargetType
-{
-    MainWindowTitle, ProcessName, ProcessLocation
+    internal static int ToMilliseconds(this double minutes)
+        => (int)(minutes * 60 * 1000);
 }
