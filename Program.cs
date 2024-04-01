@@ -13,6 +13,7 @@ internal static class Program
     internal static TimeOnly EndTime => TimeOnly.Parse(_config.EndTime);
     internal static TimeOnly TimeNow => TimeOnly.FromDateTime(DateTime.Now);
     internal static int TimeBetweenShutdownAttempts => _config.MinutesBetweenCloseAttempts.ToMilliseconds();
+    internal static bool LogToConsole = CommandLineArgs.GetFlag("log");
     private static void Main()
     {
         if(LoadConfig() is SlpConfig config)
@@ -45,20 +46,24 @@ internal static class Program
         foreach (Process process in Process.GetProcesses())
             if (_config.Close.Any(x => x.Matches(process)) && !_config.Allow.Any(x => x.Matches(process)))
             {
-                Console.WriteLine($"{TimeNow,-10} Closing {process.MainWindowTitle} ({process.ProcessName})...");
+                Log($"{TimeNow,-10} Closing {process.MainWindowTitle} ({process.ProcessName})...");
                 process.CloseMainWindow();
             }
     }
     private static void SleepUntil(TimeOnly time)
     {
-        Console.WriteLine($"Sleeping until {time}.");
+        Log($"Sleeping until {time}.");
         int delay = (int)(time -  TimeNow).TotalMilliseconds;
         Thread.Sleep(delay);
     }
     private static void SleepFor(int milliseconds)
     {
-        Console.WriteLine($"Sleeping for {milliseconds}ms until {TimeOnly.FromDateTime(DateTime.Now + TimeSpan.FromMilliseconds(milliseconds))}.");
+        Log($"Sleeping for {milliseconds}ms until {TimeOnly.FromDateTime(DateTime.Now + TimeSpan.FromMilliseconds(milliseconds))}.");
         Thread.Sleep(milliseconds);
+    }
+    private static void Log(object? msg)
+    {
+        if(LogToConsole) Console.WriteLine(msg);
     }
     internal static int ToMilliseconds(this double minutes)
         => (int)(minutes * 60 * 1000);
