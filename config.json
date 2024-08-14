@@ -1,0 +1,33 @@
+{
+  "startTime": "12:30 AM",
+  "endTime": "10:00 AM",
+  "minutesBetweenCloseAttempts": 1,
+  "close": [
+    {
+      "targetType": "processLocation",
+      "value": "C:\\Program Files (x86)\\Steam",
+      "startLateAt": null,
+      "endEarlyAt": null
+    },
+    {
+      "targetType": "mainWindowTitle",
+      "value": "Minecraft",
+      "startLateAt": null,
+      "endEarlyAt": null
+    },
+    {
+      "targetType": "mainWindowTitle",
+      "value": "Visual Studio",
+      "startLateAt": null,
+      "endEarlyAt": "7:00 AM"
+    }
+  ],
+  "allow": [
+    {
+      "targetType": "processName",
+      "value": "CrashHandler",
+      "startLateAt": null,
+      "endEarlyAt": null
+    }
+  ]
+}
