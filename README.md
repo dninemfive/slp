@@ -1,3 +1,6 @@
+> [!IMPORTANT] 
+> slp has been superceded by [ktv](https://github.com/dninemfive/ktv), which has all the same features and more.
+
 # slp - <ins>Sl</ins>ee<ins>p</ins> enforcement tool.
 A simple script to manage my productivity by shutting down programs which keep me awake too late or distract me in the morning.
 
